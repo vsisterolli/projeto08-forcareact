@@ -1,13 +1,16 @@
 import React from "react";
 import palavras from "./palavras";
+import Topo from "./Topo";
+import Chute from "././Chute";
+import Letras from "./Letras";
 
 let palavraEscolhida = "";
 let erros = 0;
+const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 
 export default function App() {
     
-    const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
-    let [displayPalavra, setDisplayPalavra] = React.useState([]);
+    const [displayPalavra, setDisplayPalavra] = React.useState([]);
     const [classesLetras, setClassesLetras] = React.useState("letra inativa");
     const [forca, setForca] = React.useState("assets/forca0.png");
     const [classeDisplay, setClasseDisplay] = React.useState("");
@@ -16,7 +19,7 @@ export default function App() {
     function terminarJogo(vitoria) {
         
         if(vitoria) {
-            setDisplayPalavra(displayPalavra.replaceAll(' ', ''));
+            setDisplayPalavra(palavraEscolhida.replaceAll(' ', ''));
             setClasseDisplay("ganhou");
         }
         else {
@@ -41,14 +44,13 @@ export default function App() {
             
             const auxiliar = displayPalavra.split(' ');
             for(let i = 0; i < auxiliar.length; i++)
-                if(semAcento[i] == letras[indice]) 
+                if(semAcento[i] === letras[indice]) 
                     auxiliar[i] = palavraEscolhida[i];
             setDisplayPalavra(auxiliar.join(' '));
             
-            if(auxiliar.indexOf('_') === -1) {
-                displayPalavra = palavraEscolhida.split(' ').join('');
+            if(auxiliar.indexOf('_') === -1) 
                 terminarJogo(true);
-            }
+            
 
         }
 
@@ -69,6 +71,7 @@ export default function App() {
 
         const posicaoEscolihda = Math.floor(Math.random() * palavras.length);
         palavraEscolhida = palavras[posicaoEscolihda].toUpperCase();
+        console.log(palavraEscolhida);
 
         let arrayInicial = [];
         for(let i = 0; i < palavraEscolhida.length; i++)
@@ -84,10 +87,9 @@ export default function App() {
         if(classesLetras === "letra inativa")
             return;
 
-        if(palavraEscolhida.replaceAll(' ', '') === chutePalavraForm) {
-            displayPalavra = palavraEscolhida.replaceAll(' ', '');
+        if(palavraEscolhida.replaceAll(' ', '') === chutePalavraForm) 
             terminarJogo(true);
-        }
+        
         else {
             erros = 6;
             setForca(`assets/forca${erros}.png`)
@@ -97,26 +99,9 @@ export default function App() {
 
     return (
         <>
-            <div className="container topo">
-                <img data-identifier="game-image" src={forca}/>
-                <button data-identifier="choose-word" onClick={iniciarJogo}>Escolher palavra</button>
-                <p data-identifier="word" className={classeDisplay}>{displayPalavra}</p>
-            </div>
-            <div className="container letras">
-                {letras.map((value, indice) => <button data-identifier="letter" key={indice} onClick={e => chutarLetra(indice, e)} className={classesLetras}>{value}</button>)}
-            </div>
-            <div className="container chute">
-                <p>Já sei a palavra!</p>
-                
-                <input type="text" 
-                    data-identifier="type-guess" 
-                    onKeyUp={(e) => e.key === 'Enter' ? chutarPalavra(e) : ''} 
-                    value={chutePalavraForm}
-                    onChange={(e) => setChutePalavraForm(classesLetras === "letra inativa" ? "" : e.target.value.toUpperCase().replaceAll(' ', ''))}>
-                </input>
-
-                <button data-identifier="guess-button" onClick={chutarPalavra}>Chutar</button>
-            </div>
+            <Topo iniciarJogo={iniciarJogo} classeDisplay={classeDisplay} displayPalavra={displayPalavra} forca={forca}/>
+            <Letras letras={letras} classesLetras={classesLetras} chutarLetra={chutarLetra}/>
+            <Chute chutarPalavra={chutarPalavra} classesLetras={classesLetras} chutePalavraForm={chutePalavraForm} setChutePalavraForm={setChutePalavraForm}/>
         </>
     );
 }
