@@ -1,15 +1,15 @@
 import React from "react";
 import palavras from "./palavras";
-import Topo from "./Topo";
+import Jogo from "./Jogo";
 import Chute from "././Chute";
 import Letras from "./Letras";
 
 let palavraEscolhida = "";
 let erros = 0;
-const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 
 export default function App() {
     
+    const [letras, setLetras] = React.useState("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(''));
     const [displayPalavra, setDisplayPalavra] = React.useState([]);
     const [classesLetras, setClassesLetras] = React.useState("letra inativa");
     const [forca, setForca] = React.useState("assets/forca0.png");
@@ -33,6 +33,7 @@ export default function App() {
 
     function chutarLetra(indice, e) {
      
+        
         if(e.target.className === "letra inativa")
             return;
         
@@ -64,6 +65,8 @@ export default function App() {
 
     function iniciarJogo() {
 
+        const aux = [...letras];
+        setLetras(aux);
         setForca(`assets/forca${0}.png`)
         setChutePalavraForm("");
         setClasseDisplay("");
@@ -99,7 +102,7 @@ export default function App() {
 
     return (
         <>
-            <Topo iniciarJogo={iniciarJogo} classeDisplay={classeDisplay} displayPalavra={displayPalavra} forca={forca}/>
+            <Jogo iniciarJogo={iniciarJogo} classeDisplay={classeDisplay} displayPalavra={displayPalavra} forca={forca}/>
             <Letras letras={letras} classesLetras={classesLetras} chutarLetra={chutarLetra}/>
             <Chute chutarPalavra={chutarPalavra} classesLetras={classesLetras} chutePalavraForm={chutePalavraForm} setChutePalavraForm={setChutePalavraForm}/>
         </>
