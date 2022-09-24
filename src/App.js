@@ -3,7 +3,6 @@ import palavras from "./palavras";
 
 let palavraEscolhida = "";
 let erros = 0;
-let chutePalavraForm = "";
 
 export default function App() {
     
@@ -12,6 +11,7 @@ export default function App() {
     const [classesLetras, setClassesLetras] = React.useState("letra inativa");
     const [forca, setForca] = React.useState("assets/forca0.png");
     const [classeDisplay, setClasseDisplay] = React.useState("");
+    const [chutePalavraForm, setChutePalavraForm] = React.useState("");
 
     function terminarJogo(vitoria) {
         
@@ -62,9 +62,14 @@ export default function App() {
 
     function iniciarJogo() {
 
+        setForca(`assets/forca${0}.png`)
+        setChutePalavraForm("");
+        setClasseDisplay("");
+        erros = 0;
+
         const posicaoEscolihda = Math.floor(Math.random() * palavras.length);
         palavraEscolhida = palavras[posicaoEscolihda].toUpperCase();
-        console.log(palavraEscolhida);
+
         let arrayInicial = [];
         for(let i = 0; i < palavraEscolhida.length; i++)
             arrayInicial.push('_');
@@ -74,12 +79,12 @@ export default function App() {
 
     }
 
-    function chutarPalavra() {
+    function chutarPalavra(e) {
 
         if(classesLetras === "letra inativa")
             return;
 
-        if(palavraEscolhida.replaceAll(' ', '') === chutePalavraForm.replaceAll(' ', '')) {
+        if(palavraEscolhida.replaceAll(' ', '') === chutePalavraForm) {
             displayPalavra = palavraEscolhida.replaceAll(' ', '');
             terminarJogo(true);
         }
@@ -93,17 +98,24 @@ export default function App() {
     return (
         <>
             <div className="container topo">
-                <img src={forca}/>
-                <button onClick={iniciarJogo}>Escolher palavra</button>
-                <p className={classeDisplay}>{displayPalavra}</p>
+                <img data-identifier="game-image" src={forca}/>
+                <button data-identifier="choose-word" onClick={iniciarJogo}>Escolher palavra</button>
+                <p data-identifier="word" className={classeDisplay}>{displayPalavra}</p>
             </div>
             <div className="container letras">
-                {letras.map((value, indice) => <button key={indice} onClick={e => chutarLetra(indice, e)} className={classesLetras}>{value}</button>)}
+                {letras.map((value, indice) => <button data-identifier="letter" key={indice} onClick={e => chutarLetra(indice, e)} className={classesLetras}>{value}</button>)}
             </div>
             <div className="container chute">
                 <p>Já sei a palavra!</p>
-                <input type="text" onChange={(e) => chutePalavraForm = e.target.value.toUpperCase()}></input>
-                <button onClick={chutarPalavra}>Chutar</button>
+                
+                <input type="text" 
+                    data-identifier="type-guess" 
+                    onKeyUp={(e) => e.key === 'Enter' ? chutarPalavra(e) : ''} 
+                    value={chutePalavraForm}
+                    onChange={(e) => setChutePalavraForm(classesLetras === "letra inativa" ? "" : e.target.value.toUpperCase().replaceAll(' ', ''))}>
+                </input>
+
+                <button data-identifier="guess-button" onClick={chutarPalavra}>Chutar</button>
             </div>
         </>
     );
