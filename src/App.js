@@ -24,11 +24,8 @@ export default function App() {
 
     function terminarJogo(venceu) {
         
-        if(venceu) 
-            setDisplayPalavra(palavraEscolhida.replaceAll(' ', ''));
         
-        else 
-            setDisplayPalavra("quarentena");
+        setDisplayPalavra(palavraEscolhida.replaceAll(' ', ''));
 
         const aux = [...ativos];
         for(let i = 0; i < aux.length; i++)
@@ -93,7 +90,6 @@ export default function App() {
 
         const posicaoEscolihda = Math.floor(Math.random() * palavras.length);
         palavraEscolhida = palavras[posicaoEscolihda].toUpperCase();
-        console.log(palavraEscolhida);
 
         let arrayInicial = [];
         for(let i = 0; i < palavraEscolhida.length; i++)
