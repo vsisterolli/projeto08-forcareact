@@ -3,10 +3,10 @@ import styled from 'styled-components';
 export default function Jogo(props) {
     return(   
         <>
-        <Topo>
+        <Topo vitoria={props.vitoria}>
             <img data-identifier="game-image" alt="imagem da forca" src={props.forca}/>
             <button data-identifier="choose-word" onClick={props.iniciarJogo}>Escolher palavra</button>
-            <p data-identifier="word" className={props.classeDisplay}>{props.displayPalavra}</p>
+            <p data-identifier="word">{props.displayPalavra}</p>
         </Topo>
         </>
     )
@@ -45,6 +45,7 @@ const Topo = styled.div`
         right: 15%;
         font-size: 50px;
         font-family: 'Courier New', Courier, monospace;
+        color: ${props =>  props.vitoria === "none" ? "black" : props.vitoria ? "green" : "red"};
     }
 
     @media (max-width: 1400px) {

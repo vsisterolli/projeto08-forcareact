@@ -3,41 +3,51 @@ import palavras from "./palavras";
 import Jogo from "./Jogo";
 import Chute from "././Chute";
 import Letras from "./Letras";
+import GlobalStyle from "./GlobalStyle.js"
 
 let palavraEscolhida = "";
 let erros = 0;
+let finalizado = true;
+
+const inicial = [];
+for(let i = 0 ; i < 26; i++)
+    inicial.push(false);
 
 export default function App() {
     
     const [letras, setLetras] = React.useState("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(''));
     const [displayPalavra, setDisplayPalavra] = React.useState([]);
-    const [classesLetras, setClassesLetras] = React.useState("letra inativa");
     const [forca, setForca] = React.useState("assets/forca0.png");
-    const [classeDisplay, setClasseDisplay] = React.useState("");
     const [chutePalavraForm, setChutePalavraForm] = React.useState("");
+    const [vitoria, setVitoria] = React.useState("none");
+    const [ativos, setAtivos] = React.useState(inicial);
 
-    function terminarJogo(vitoria) {
+    function terminarJogo(venceu) {
         
-        if(vitoria) {
+        if(venceu) 
             setDisplayPalavra(palavraEscolhida.replaceAll(' ', ''));
-            setClasseDisplay("ganhou");
-        }
-        else {
+        
+        else 
             setDisplayPalavra("quarentena");
-            setClasseDisplay("perdeu");
-        }
 
-        setClassesLetras("letra inativa");
+        const aux = [...ativos];
+        for(let i = 0; i < aux.length; i++)
+            aux[i] = false;
+        setAtivos(aux);
+        finalizado = true;
+
+        setVitoria(venceu);
 
     }
 
     function chutarLetra(indice, e) {
      
-        
-        if(e.target.className === "letra inativa")
+        if(ativos[indice] === false)
             return;
-        
-        e.target.className = "letra inativa";
+
+        const aux = [...ativos];
+        aux[indice] = false;
+        setAtivos(aux);
         
         let semAcento = palavraEscolhida.normalize('NFD').replace(/[\u0300-\u036f]/g, ""); // normaliza removendo os acentos
 
@@ -52,25 +62,34 @@ export default function App() {
             if(auxiliar.indexOf('_') === -1) 
                 terminarJogo(true);
             
+            
 
         }
 
         else {
             setForca(`assets/forca${++erros}.png`)
-            if(erros === 6)
+            if(erros === 6) 
                 terminarJogo(false);
+            
         }
 
     }
 
     function iniciarJogo() {
 
-        const aux = [...letras];
+        let aux = [...letras];
         setLetras(aux);
         setForca(`assets/forca${0}.png`)
         setChutePalavraForm("");
-        setClasseDisplay("");
+        setVitoria("none");
+
         erros = 0;
+        finalizado = false;
+
+        aux = [];
+        for(let i = 0; i < letras.length; i++)
+            aux.push(true);
+        setAtivos(aux);
 
         const posicaoEscolihda = Math.floor(Math.random() * palavras.length);
         palavraEscolhida = palavras[posicaoEscolihda].toUpperCase();
@@ -81,17 +100,17 @@ export default function App() {
             arrayInicial.push('_');
 
         setDisplayPalavra(arrayInicial.join(' '));
-        setClassesLetras("letra ativa")
 
     }
 
     function chutarPalavra(e) {
 
-        if(classesLetras === "letra inativa")
+        if(finalizado)
             return;
 
         if(palavraEscolhida.replaceAll(' ', '') === chutePalavraForm) 
             terminarJogo(true);
+        
         
         else {
             erros = 6;
@@ -102,9 +121,10 @@ export default function App() {
 
     return (
         <>
-            <Jogo iniciarJogo={iniciarJogo} classeDisplay={classeDisplay} displayPalavra={displayPalavra} forca={forca}/>
-            <Letras letras={letras} classesLetras={classesLetras} chutarLetra={chutarLetra}/>
-            <Chute chutarPalavra={chutarPalavra} classesLetras={classesLetras} chutePalavraForm={chutePalavraForm} setChutePalavraForm={setChutePalavraForm}/>
+            <GlobalStyle/>
+            <Jogo iniciarJogo={iniciarJogo} vitoria={vitoria} displayPalavra={displayPalavra} forca={forca}/>
+            <Letras ativos={ativos} letras={letras} chutarLetra={chutarLetra}/>
+            <Chute chutarPalavra={chutarPalavra} finalizado={finalizado} chutePalavraForm={chutePalavraForm} setChutePalavraForm={setChutePalavraForm}/>
         </>
     );
 }
